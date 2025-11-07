@@ -14,3 +14,10 @@ CPU-based implementation without any external rendering libraries.
 ## Example
 
 [![Rendered Image](assets/output.png)](assets/output.mp4)
+
+## Image to Video
+
+```shell
+mkdir output
+ffmpeg -r 60 -i output/frame_%03d.png -vcodec libx264 -pix_fmt yuv420p -r 60 output.mp4
+```
