@@ -137,7 +137,7 @@ impl RayTracer {
                 );
 
                 // Return the light emission attenuated by the material
-                return light.emission * attenuation * current_weight;
+                return light.emission * attenuation;
             }
         }
 
@@ -158,15 +158,11 @@ impl RayTracer {
             (-passing_material.absorption.b * distance).exp(),
         );
 
-        // Get the material at intersection (now embedded in Intersection)
-        let material = intersection.material;
-
         // === DIRECT LIGHTING ===
         // Compute light contribution from all light sources
         let mut direct_color = Color::black();
         for light in lights {
-            direct_color =
-                direct_color + self.compute_direct_light(&intersection, light, &material, surfaces);
+            direct_color = direct_color + self.compute_direct_light(&intersection, light, surfaces);
         }
 
         // === INDIRECT LIGHTING (RAY BRANCHING) ===
@@ -185,7 +181,8 @@ impl RayTracer {
                 branched.passing_material,
             );
             // Modulate by material albedo (contribution already includes all recursive effects)
-            indirect_color = indirect_color + (material.albedo * contribution);
+            // indirect_color = indirect_color + (material.albedo * contribution);
+            indirect_color = indirect_color + contribution * branched.weight;
         }
 
         // Apply Beer's law attenuation to both direct and indirect lighting
@@ -225,7 +222,6 @@ impl RayTracer {
         &self,
         intersection: &Intersection,
         light: &Light,
-        material: &super::material::Material,
         surfaces: &[impl Surface],
     ) -> Color {
         // Vector from intersection point to light center
@@ -233,7 +229,8 @@ impl RayTracer {
 
         // Lambertian cosine law: only lit if facing the light
         // Use absolute value of dot product to handle both sides of the surface
-        let cos_theta = to_light.dot(intersection.normal).clamp(0.0, 1.0);
+        // let cos_theta = to_light.dot(intersection.normal).clamp(0.0, 1.0);
+        let cos_theta = to_light.dot(intersection.normal).abs();
 
         // Shadow ray: trace toward the light to check visibility
         // Apply offset to avoid self-intersection (shadow acne)
@@ -256,8 +253,8 @@ impl RayTracer {
         }
 
         // Lambertian diffuse reflection formula:
-        // diffuse_color = object_color * light_color * cos_theta * diffuse_rate
-        material.albedo * light.emission * (cos_theta * material.diffuse_rate)
+        // diffuse_color = object_color * light_color * cos_theta
+        intersection.material.albedo * light.emission * cos_theta
     }
 
     /// Generate branched rays after ray-surface interaction.

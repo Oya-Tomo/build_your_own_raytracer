@@ -84,30 +84,30 @@ fn frame(time: Float, filename: &str) {
     );
 
     // === SCENE ===
-    let mirror = Material::mirror(Color::white(), 0.9);
+    let mirror = Material::mirror(Color::black(), 0.9);
     let red_glass = Material::new(
-        Color::new(0.7, 0.2, 0.2),
+        Color::new(0.9, 0.0, 0.0),
         0.0,
         0.1,
-        0.9,
+        0.8,
         1.5,
-        Color::new(0.0, 0.01, 0.01),
+        Color::new(0.0, 1.5, 1.5),
     );
     let green_glass = Material::new(
-        Color::new(0.2, 0.7, 0.2),
+        Color::new(0.0, 0.9, 0.0),
         0.0,
         0.1,
-        0.9,
+        0.8,
         1.5,
-        Color::new(0.01, 0.0, 0.01),
+        Color::new(1.5, 0.0, 1.5),
     );
     let blue_glass = Material::new(
-        Color::new(0.2, 0.2, 0.7),
+        Color::new(0.0, 0.0, 0.9),
         0.0,
         0.1,
-        0.9,
+        0.8,
         1.5,
-        Color::new(0.01, 0.01, 0.0),
+        Color::new(1.5, 1.5, 0.0),
     );
     let yellow_matte = Material::new(
         Color::new(1.0, 1.0, 1.0),
@@ -144,9 +144,9 @@ fn frame(time: Float, filename: &str) {
     ];
 
     // === LIGHTING SETUP ===
-    let light1 = Light::new(Vec3::new(3.0, -3.0, 5.0), 3.0, Color::new(5.0, 5.0, 5.0));
-    let light2 = Light::new(Vec3::new(0.0, 0.0, 10.0), 2.0, Color::new(5.8, 5.8, 5.0));
-    let light3 = Light::new(Vec3::new(-10.0, -5.0, 5.0), 2.0, Color::new(9.0, 10.0, 9.5)); // Top light
+    let light1 = Light::new(Vec3::new(3.0, -3.0, 5.0), 3.0, Color::new(1.0, 1.0, 1.0));
+    let light2 = Light::new(Vec3::new(0.0, 0.0, 10.0), 2.0, Color::new(1.0, 1.0, 1.0));
+    let light3 = Light::new(Vec3::new(-10.0, -5.0, 5.0), 2.0, Color::new(1.0, 1.0, 1.0)); // Top light
 
     let lights = [light1, light2, light3];
 
