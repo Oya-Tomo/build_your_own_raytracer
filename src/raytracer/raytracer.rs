@@ -233,7 +233,7 @@ impl RayTracer {
 
         // Lambertian cosine law: only lit if facing the light
         // Use absolute value of dot product to handle both sides of the surface
-        let cos_theta = to_light.dot(intersection.normal).abs();
+        let cos_theta = to_light.dot(intersection.normal).clamp(0.0, 1.0);
 
         // Shadow ray: trace toward the light to check visibility
         // Apply offset to avoid self-intersection (shadow acne)

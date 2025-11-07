@@ -64,14 +64,14 @@ fn main() {
 
     let triangle1 = Triangle::new(
         Vec3::new(3.0, 3.0, 0.0),
-        Vec3::new(3.0, -1.0, 0.0),
         Vec3::new(-3.0, -1.0, 0.0),
+        Vec3::new(3.0, -1.0, 0.0),
         yellow_matte,
     );
     let triangle2 = Triangle::new(
         Vec3::new(3.0, 3.0, 0.0),
-        Vec3::new(-3.0, -1.0, 0.0),
         Vec3::new(-3.0, 3.0, 0.0),
+        Vec3::new(-3.0, -1.0, 0.0),
         yellow_matte,
     );
 
@@ -91,7 +91,7 @@ fn main() {
     let vacuum = Material::new(Color::black(), 0.0, 0.0, 1.0, 1.0, Color::black());
     let raytracer = RayTracer::new(
         Color::new(0.0, 0.0, 0.0), // background color (darker blue)
-        8,                         // max depth
+        16,                        // max depth
         1e-3,                      // min weight
         vacuum,
     );
