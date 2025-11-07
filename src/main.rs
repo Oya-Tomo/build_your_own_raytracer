@@ -1,5 +1,6 @@
 mod raytracer;
 
+use image::math;
 use raytracer::camera::Camera;
 use raytracer::light::Light;
 use raytracer::material::{Color, Material};
@@ -10,13 +11,14 @@ use raytracer::vector::Vec3;
 
 use crate::raytracer::image::ACESFilmic;
 use crate::raytracer::vector::Float;
+use std::f32::consts::PI;
 use std::sync::Arc;
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::thread;
 
 fn main() {
     let fps: Float = 60.0;
-    let frames: usize = fps as usize * 5;
+    let frames: usize = fps as usize * 6;
 
     // Get number of available CPU cores
     let num_cores = std::thread::available_parallelism()
@@ -118,7 +120,7 @@ fn frame(time: Float, filename: &str) {
         Color::new(0.0, 0.0, 0.0),
     );
 
-    let x = (time * 2.0).sin() * 1.5;
+    let x = (time * PI / 2.0).sin() * 1.5;
 
     let sphere1 = Sphere::new(Vec3::new(x, 1.5, 0.7), 0.7, mirror);
     let sphere2 = Sphere::new(Vec3::new(0.0, 0.0, 0.5), 0.5, red_glass);
