@@ -18,7 +18,7 @@ use std::thread;
 
 fn main() {
     let fps: Float = 60.0;
-    let frames: usize = fps as usize * 6;
+    let frames: usize = fps as usize * 8;
 
     // Get number of available CPU cores
     let num_cores = std::thread::available_parallelism()
