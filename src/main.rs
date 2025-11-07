@@ -1,6 +1,5 @@
 mod raytracer;
 
-use image::math;
 use raytracer::camera::Camera;
 use raytracer::light::Light;
 use raytracer::material::{Color, Material};
