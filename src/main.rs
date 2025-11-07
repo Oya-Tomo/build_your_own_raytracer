@@ -74,38 +74,38 @@ fn main() {
 fn frame(time: Float, filename: &str) {
     // === CAMERA SETUP ===
     let camera = Camera::new(
-        Vec3::new(0.0, -2.0, 2.0), // eye position
-        Vec3::new(0.0, 1.0, -1.0), // forward direction
+        Vec3::new(0.0, -3.0, 3.0), // eye position
+        Vec3::new(0.0, 3.0, -2.0), // forward direction
         Vec3::new(0.0, 0.0, 1.0),  // up direction
-        90.0,                      // field of view (degrees)
+        60.0,                      // field of view (degrees)
         1920,                      // image width
         1080,                      // image height
         2,                         // subdivisions for anti-aliasing
     );
 
     // === SCENE ===
-    let mirror = Material::mirror(Color::new(0.02, 0.02, 0.02), 0.9);
+    let mirror = Material::mirror(Color::new(0.05, 0.05, 0.05), 0.9);
     let red_glass = Material::new(
-        Color::new(0.5, 0.0, 0.0),
+        Color::new(0.3, 0.0, 0.0),
         0.0,
-        0.1,
-        0.8,
+        0.05,
+        0.9,
         1.5,
         Color::new(0.0, 1.5, 1.5),
     );
     let green_glass = Material::new(
-        Color::new(0.0, 0.5, 0.0),
+        Color::new(0.0, 0.3, 0.0),
         0.0,
-        0.1,
-        0.8,
+        0.05,
+        0.9,
         1.5,
         Color::new(1.5, 0.0, 1.5),
     );
     let blue_glass = Material::new(
-        Color::new(0.0, 0.0, 0.5),
+        Color::new(0.0, 0.0, 0.3),
         0.0,
-        0.1,
-        0.8,
+        0.05,
+        0.9,
         1.5,
         Color::new(1.5, 1.5, 0.0),
     );
