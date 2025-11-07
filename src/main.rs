@@ -84,7 +84,7 @@ fn frame(time: Float, filename: &str) {
     );
 
     // === SCENE ===
-    let mirror = Material::mirror(Color::black(), 0.9);
+    let mirror = Material::mirror(Color::new(0.02, 0.02, 0.02), 0.9);
     let red_glass = Material::new(
         Color::new(0.5, 0.0, 0.0),
         0.0,
