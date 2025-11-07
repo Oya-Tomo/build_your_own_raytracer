@@ -13,4 +13,4 @@ CPU-based implementation without any external rendering libraries.
 
 ## Image
 
-![Rendered Image](./assets/output.png)
+https://github.com/Oya-Tomo/build_your_own_raytracer/raw/refs/heads/main/assets/output.mp4
