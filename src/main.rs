@@ -9,8 +9,69 @@ use raytracer::sphere::Sphere;
 use raytracer::vector::Vec3;
 
 use crate::raytracer::image::ACESFilmic;
+use crate::raytracer::vector::Float;
+use std::sync::Arc;
+use std::sync::atomic::{AtomicBool, Ordering};
+use std::thread;
 
 fn main() {
+    let fps: Float = 60.0;
+    let frames: usize = fps as usize * 5;
+
+    // Get number of available CPU cores
+    let num_cores = std::thread::available_parallelism()
+        .map(|n| n.get())
+        .unwrap_or(1);
+
+    // Limit to at most 4 concurrent threads
+    let max_concurrent_threads = std::cmp::min(16, num_cores);
+
+    println!(
+        "Starting multi-threaded rendering with {} available CPU cores",
+        num_cores
+    );
+    println!(
+        "Limiting to {} concurrent rendering threads",
+        max_concurrent_threads
+    );
+
+    let mut handles: Vec<(usize, thread::JoinHandle<()>, Arc<AtomicBool>)> = vec![];
+    let mut next_frame = 0;
+
+    while next_frame < frames || !handles.is_empty() {
+        // Scan all handles and remove finished threads
+        handles.retain_mut(|(frame_idx, _handle, is_done)| {
+            if is_done.load(Ordering::Relaxed) {
+                println!("Frame {} completed", frame_idx);
+                false // Remove this handle
+            } else {
+                true // Keep this handle
+            }
+        });
+
+        // If we have capacity and frames left to render, spawn a new thread
+        if next_frame < frames && handles.len() < max_concurrent_threads {
+            let f = next_frame;
+            let is_done = Arc::new(AtomicBool::new(false));
+            let is_done_clone = Arc::clone(&is_done);
+
+            let handle = thread::spawn(move || {
+                let time = f as Float / fps;
+                frame(time, &format!("output/frame_{:03}.png", f));
+                is_done_clone.store(true, Ordering::Relaxed);
+            });
+            handles.push((f, handle, is_done));
+            next_frame += 1;
+        } else if !handles.is_empty() {
+            // If no capacity and frames remain, wait a tiny bit before checking again
+            std::thread::sleep(std::time::Duration::from_millis(10));
+        }
+    }
+
+    println!("All frames rendered!");
+}
+
+fn frame(time: Float, filename: &str) {
     // === CAMERA SETUP ===
     let camera = Camera::new(
         Vec3::new(0.0, -2.0, 2.0), // eye position
@@ -19,7 +80,7 @@ fn main() {
         90.0,                      // field of view (degrees)
         1920,                      // image width
         1080,                      // image height
-        1,                         // subdivisions for anti-aliasing
+        2,                         // subdivisions for anti-aliasing
     );
 
     // === SCENE ===
@@ -57,7 +118,9 @@ fn main() {
         Color::new(0.0, 0.0, 0.0),
     );
 
-    let sphere1 = Sphere::new(Vec3::new(-0.5, 1.5, 0.7), 0.7, mirror);
+    let x = (time * 2.0).sin() * 1.5;
+
+    let sphere1 = Sphere::new(Vec3::new(x, 1.5, 0.7), 0.7, mirror);
     let sphere2 = Sphere::new(Vec3::new(0.0, 0.0, 0.5), 0.5, red_glass);
     let sphere3 = Sphere::new(Vec3::new(-1.2, 0.0, 0.5), 0.5, blue_glass);
     let sphere4 = Sphere::new(Vec3::new(1.2, 0.0, 0.5), 0.5, green_glass);
@@ -91,7 +154,7 @@ fn main() {
     let vacuum = Material::new(Color::black(), 0.0, 0.0, 1.0, 1.0, Color::black());
     let raytracer = RayTracer::new(
         Color::new(0.0, 0.0, 0.0), // background color (darker blue)
-        16,                        // max depth
+        8,                         // max depth
         1e-3,                      // min weight
         vacuum,
     );
@@ -123,10 +186,10 @@ fn main() {
     }
 
     // === SAVE TO FILE ===
-    save_image_to_file(&rgb8_data, image.width, image.height, "output.png")
+    save_image_to_file(&rgb8_data, image.width, image.height, filename)
         .expect("Failed to save image");
 
-    println!("Rendering complete. Image saved to output.png");
+    println!("Rendering complete. Image saved to {}", filename);
 }
 
 /// Convert RGB8 pixel data to an image and save to a PNG file
