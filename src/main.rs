@@ -13,58 +13,72 @@ use crate::raytracer::image::ACESFilmic;
 fn main() {
     // === CAMERA SETUP ===
     let camera = Camera::new(
-        Vec3::new(0.0, -1.5, 3.0), // eye position
+        Vec3::new(0.0, -2.0, 2.0), // eye position
         Vec3::new(0.0, 1.0, -1.0), // forward direction
-        Vec3::new(0.0, 1.0, 1.0),  // up direction
+        Vec3::new(0.0, 0.0, 1.0),  // up direction
         90.0,                      // field of view (degrees)
-        800,                       // image width
-        600,                       // image height
-        2,                         // subdivisions for anti-aliasing
+        1920,                      // image width
+        1080,                      // image height
+        1,                         // subdivisions for anti-aliasing
     );
 
     // === SCENE ===
     let mirror = Material::mirror(Color::white(), 0.9);
     let red_glass = Material::new(
-        Color::red(),
+        Color::new(0.7, 0.2, 0.2),
         0.0,
-        0.3,
-        0.7,
+        0.1,
+        0.9,
         1.5,
-        Color::new(0.0, 0.05, 0.05),
+        Color::new(0.0, 0.01, 0.01),
     );
     let green_glass = Material::new(
-        Color::green(),
+        Color::new(0.2, 0.7, 0.2),
         0.0,
-        0.3,
-        0.7,
+        0.1,
+        0.9,
         1.5,
-        Color::new(0.05, 0.0, 0.05),
+        Color::new(0.01, 0.0, 0.01),
     );
     let blue_glass = Material::new(
-        Color::blue(),
+        Color::new(0.2, 0.2, 0.7),
         0.0,
-        0.3,
-        0.7,
+        0.1,
+        0.9,
         1.5,
-        Color::new(0.05, 0.05, 0.00),
+        Color::new(0.01, 0.01, 0.0),
     );
-    let yellow_matte = Material::matte(Color::new(1.0, 1.0, 0.0), 0.8);
+    let yellow_matte = Material::new(
+        Color::new(1.0, 1.0, 1.0),
+        0.2,
+        0.6,
+        0.2,
+        1.0,
+        Color::new(0.0, 0.0, 0.0),
+    );
 
-    let sphere1 = Sphere::new(Vec3::new(0.0, 1.5, 0.7), 0.7, mirror);
+    let sphere1 = Sphere::new(Vec3::new(-0.5, 1.5, 0.7), 0.7, mirror);
     let sphere2 = Sphere::new(Vec3::new(0.0, 0.0, 0.5), 0.5, red_glass);
     let sphere3 = Sphere::new(Vec3::new(-1.2, 0.0, 0.5), 0.5, blue_glass);
     let sphere4 = Sphere::new(Vec3::new(1.2, 0.0, 0.5), 0.5, green_glass);
 
-    let triangle = Triangle::new(
-        Vec3::new(0.0, 2.0, 0.0),
-        Vec3::new(3.0, -0.5, 0.0),
-        Vec3::new(-3.0, -0.5, 0.0),
+    let triangle1 = Triangle::new(
+        Vec3::new(3.0, 3.0, 0.0),
+        Vec3::new(3.0, -1.0, 0.0),
+        Vec3::new(-3.0, -1.0, 0.0),
+        yellow_matte,
+    );
+    let triangle2 = Triangle::new(
+        Vec3::new(3.0, 3.0, 0.0),
+        Vec3::new(-3.0, -1.0, 0.0),
+        Vec3::new(-3.0, 3.0, 0.0),
         yellow_matte,
     );
 
     // Use trait objects to store mixed geometry types
-    let surfaces: Vec<&dyn raytracer::Surface> =
-        vec![&sphere1, &sphere2, &sphere3, &sphere4, &triangle];
+    let surfaces: Vec<&dyn raytracer::Surface> = vec![
+        &sphere1, &sphere2, &sphere3, &sphere4, &triangle1, &triangle2,
+    ];
 
     // === LIGHTING SETUP ===
     let light1 = Light::new(Vec3::new(3.0, -3.0, 5.0), 3.0, Color::new(5.0, 5.0, 5.0));
@@ -76,7 +90,7 @@ fn main() {
     // === RAYTRACER SETUP ===
     let vacuum = Material::new(Color::black(), 0.0, 0.0, 1.0, 1.0, Color::black());
     let raytracer = RayTracer::new(
-        Color::new(0.9, 0.9, 0.9), // background color (darker blue)
+        Color::new(0.0, 0.0, 0.0), // background color (darker blue)
         8,                         // max depth
         1e-3,                      // min weight
         vacuum,

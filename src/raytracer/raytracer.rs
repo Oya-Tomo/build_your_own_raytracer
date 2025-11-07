@@ -184,8 +184,8 @@ impl RayTracer {
                 weight,
                 branched.passing_material,
             );
-            // Modulate by material albedo
-            indirect_color = indirect_color + (material.albedo * contribution) * branched.weight;
+            // Modulate by material albedo (contribution already includes all recursive effects)
+            indirect_color = indirect_color + (material.albedo * contribution);
         }
 
         // Apply Beer's law attenuation to both direct and indirect lighting
@@ -232,10 +232,8 @@ impl RayTracer {
         let to_light = (light.center - intersection.point).normalize();
 
         // Lambertian cosine law: only lit if facing the light
-        let cos_theta = to_light.dot(intersection.normal);
-        if cos_theta <= 0.0 {
-            return Color::black();
-        }
+        // Use absolute value of dot product to handle both sides of the surface
+        let cos_theta = to_light.dot(intersection.normal).abs();
 
         // Shadow ray: trace toward the light to check visibility
         // Apply offset to avoid self-intersection (shadow acne)
