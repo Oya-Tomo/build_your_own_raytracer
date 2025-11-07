@@ -80,7 +80,7 @@ fn frame(time: Float, filename: &str) {
         60.0,                      // field of view (degrees)
         1920,                      // image width
         1080,                      // image height
-        2,                         // subdivisions for anti-aliasing
+        4,                         // subdivisions for anti-aliasing
     );
 
     // === SCENE ===
@@ -154,7 +154,7 @@ fn frame(time: Float, filename: &str) {
     let vacuum = Material::new(Color::black(), 0.0, 0.0, 1.0, 1.0, Color::black());
     let raytracer = RayTracer::new(
         Color::new(0.0, 0.0, 0.0), // background color (darker blue)
-        8,                         // max depth
+        16,                        // max depth
         1e-3,                      // min weight
         vacuum,
     );
