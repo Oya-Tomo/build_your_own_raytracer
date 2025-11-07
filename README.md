@@ -11,6 +11,6 @@ CPU-based implementation without any external rendering libraries.
 - Multiple material types (diffuse, reflective, refractive)
 - Multiple tone mapping operators (Reinhard, ACES Filmic, Exposure)
 
-## Image
+## Example
 
-https://github.com/Oya-Tomo/build_your_own_raytracer/raw/refs/heads/main/assets/output.mp4
+[![Rendered Image](assets/output.png)](assets/output.mp4)
