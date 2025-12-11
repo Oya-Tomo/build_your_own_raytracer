@@ -79,7 +79,6 @@ impl Camera {
 
         let mut rays = Vec::new();
         let sub = self.subdivisions as Float;
-        let sample_size = 1.0 / sub;
 
         for y in 0..self.height {
             let mut row = Vec::new();
@@ -90,8 +89,8 @@ impl Camera {
                 for sy in 0..self.subdivisions {
                     for sx in 0..self.subdivisions {
                         // Offset within the pixel: [0, 1)
-                        let offset_x = (sx as Float + 0.5) * sample_size;
-                        let offset_y = (sy as Float + 0.5) * sample_size;
+                        let offset_x = (sx as Float + 0.5) / sub;
+                        let offset_y = (sy as Float + 0.5) / sub;
 
                         // Normalize to [-0.5, 0.5] relative to image
                         let u = (x as Float + offset_x) / (self.width as Float) - 0.5;
